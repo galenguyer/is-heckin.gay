@@ -7,8 +7,8 @@ from pathlib import Path
 from flask import Flask, render_template, send_from_directory, request, redirect, url_for, flash
 from flask_login import LoginManager, login_user, logout_user, login_required, current_user
 from flask_sqlalchemy import SQLAlchemy
+from sqlalchemy import or_
 from werkzeug.security import generate_password_hash, check_password_hash
-
 
 APP = Flask(__name__)
 
@@ -100,3 +100,26 @@ def login_post():
 def logout():
     logout_user()
     return redirect('/')
+
+
+@APP.route('/createuser', methods=['GET'])
+@login_required
+def get_createuser():
+    if not current_user.is_admin:
+        flash('Not Authorized to View Page')
+        return redirect('/')
+    return render_template('createuser.html', commit_hash=commit_hash)
+
+
+@APP.route('/createuser', methods=['POST'])
+@login_required
+def post_createuser():
+    if not current_user.is_admin:
+        flash('Not Authorized to View Page')
+        return redirect('/')
+    username = request.form.get('username')
+    email = request.form.get('email')
+    user = User.query.filter(or_(User.username==username, User.email==email)).first()
+    if user:
+        flash('User already exists')
+        return redirect('/createuser')

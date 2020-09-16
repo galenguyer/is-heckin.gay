@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+        <title>Wireguard Control Panel</title>
+        <meta name="theme-color" content="#B0197E">
+        <link rel="stylesheet" href="/static/style.css" media="screen">
+    </head>
+    <body>
+        <div class="top">
+            <h3>Create User</h3>
+        </div>
+        <form method='POST'>
+            <table id="fields">
+                <tr>
+                    <th colspan="2">New User</th>
+                </tr>
+                {% with messages = get_flashed_messages() %}
+                {% if messages %}
+                <tr>
+                    <th colspan="2">{{ messages[0] }}</th>
+                </tr>
+                {% endif %}
+                {% endwith %}
+                <tr>
+                    <td>Username</td>
+                    <td><input type="text" name="username" size="64""></td>
+                </tr>
+                <tr>
+                    <td>Email</td>
+                    <td><input type="text" name="email" size="64""></td>
+                </tr>
+            </table>
+            <input type="submit" value="Save">
+        </form>
+        {% if commit_hash %}
+        <div class="git">
+            <p>
+            <a href="https://github.com/galenguyer/wireguard_panel/tree/{{ commit_hash }}">Check out this project on GitHub ({{ commit_hash }})</a>
+            </p>
+        </div>
+        {% endif %}
+    </body>
+</html>
