@@ -44,8 +44,9 @@ else:
         password=generate_password_hash(APP.config['APP_ADMIN_PASSWORD'], method='sha256'), 
         is_admin=True,
         email='',
-        api_key='',
-        git_url='')
+        api_key=''.join(secrets.token_hex(24)),
+        git_url='',
+        reset_token=''.join(secrets.token_hex(24)))
     db.session.add(_admin_user)
     db.session.commit()
 
@@ -126,14 +127,15 @@ def post_createuser():
         return redirect('/createuser')
     
     new_user = User(username=username, 
-        password=generate_password_hash(''.join(secrets.token_hex(32)), method='sha256'), 
-        is_admin=False,
+        password=generate_password_hash(request.form.get('password'), method='sha256'), 
+        is_admin=(True if request.form.get('admin') else False),
         email=email,
-        api_key=''.join(secrets.token_hex(32)),
+        api_key=''.join(secrets.token_hex(24)),
         git_url='')
     db.session.add(new_user)
     db.session.commit()
-    return redirect('/')
+    return redirect('/users')
+
 
 @APP.route('/users', methods=['GET'])
 @login_required
@@ -143,3 +145,49 @@ def _users():
         return redirect('/')
     users = User.query.all()
     return render_template('users.html', users=users, commit_hash=commit_hash)
+
+
+@APP.route('/profile', methods=['GET'])
+@login_required
+def _get_profile():
+    return render_template('profile.html', user=current_user, commit_hash=commit_hash)
+
+
+@APP.route('/profile', methods=['POST'])
+@login_required
+def _update_profile():
+    new_email = request.form.get('email')
+    if User.query.filter_by(email=new_email).first() and not User.query.filter(or_(User.username==current_user.username, User.email==new_email)).first():
+        flash('That email is already in use')
+    else:
+        current_user.email = new_email
+    current_user.git_url = request.form.get('git_url')
+    db.session.commit()
+    return render_template('profile.html', user=current_user, commit_hash=commit_hash)
+
+
+@APP.route('/manage', methods=['GET'])
+def _get_manage():
+    if not current_user.is_admin:
+        flash('Not Authorized to View Page')
+        return redirect('/')
+    user = User.query.filter_by(username=request.args.get('user')).first_or_404()
+    return render_template('manage.html', user=user, commit_hash=commit_hash)
+
+
+@APP.route('/manage', methods=['POST'])
+def _post_manage():
+    if not current_user.is_admin:
+        flash('Not Authorized to View Page')
+        return redirect('/')
+    user = User.query.filter_by(username=request.args.get('user')).first_or_404()
+    new_email = request.form.get('email')
+    if User.query.filter_by(email=new_email).first() and not User.query.filter(or_(User.username==user.username, User.email==new_email)).first():
+        flash('That email is already in use')
+    else:
+        user.email = new_email
+    user.git_url = request.form.get('git_url')
+    user.api_key = request.form.get('api_key')
+    user.is_admin = (True if request.form.get('admin') else False)
+    db.session.commit()
+    return redirect('/manage?user='+user.username)

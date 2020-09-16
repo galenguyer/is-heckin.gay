@@ -17,6 +17,7 @@
                 <th>Username</th>
                 <th>Email</th>
                 <th>Git URL</th>
+                <th>Admin</th>
             </tr>
             {% for user in users %}
             <tr>
@@ -24,6 +25,7 @@
                 <td>{{ user.username }}</td>
                 <td>{{ user.email }}</td>
                 <td>{{ user.git_url }}</td>
+                <td>{{ user.is_admin | string }}</td>
             </tr>
             {% endfor %}
         </table>

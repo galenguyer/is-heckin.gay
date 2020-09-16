@@ -9,13 +9,10 @@
     </head>
     <body>
         <div class="top">
-            <h3>Create User</h3>
+            <h3>Manage Profile</h3>
         </div>
         <form method='POST'>
             <table id="fields">
-                <tr>
-                    <th colspan="2">New User</th>
-                </tr>
                 {% with messages = get_flashed_messages() %}
                 {% if messages %}
                 <tr>
@@ -25,19 +22,19 @@
                 {% endwith %}
                 <tr>
                     <td>Username</td>
-                    <td><input type="text" name="username" size="64"></td>
+                    <td>{{ user.username }}</td>
                 </tr>
                 <tr>
                     <td>Email</td>
-                    <td><input type="text" name="email" size="64"></td>
+                    <td><input type="text" name="email" size="64" value="{{ user.email }}"></td>
                 </tr>
                 <tr>
-                    <td>Password</td>
-                    <td><input type="text" name="password" size="64"></td>
+                    <td>Git URL</td>
+                    <td><input type="text" name="git_url" size="64" value="{{ user.git_url }}"></td>
                 </tr>
                 <tr>
-                    <td>Admin</td>
-                    <td><input type="checkbox" name="admin"></td>
+                    <td>API Key</td>
+                    <td>{{ user.api_key }}</td>
                 </tr>
             </table>
             <input type="submit" value="Save">
@@ -45,7 +42,7 @@
         {% if commit_hash %}
         <div class="git">
             <p>
-            <a href="https://github.com/galenguyer/wireguard_panel/tree/{{ commit_hash }}">Check out this project on GitHub ({{ commit_hash }})</a>
+            <a href="https://github.com/galenguyer/is-heckin.gay/tree/{{ commit_hash }}">Check out this project on GitHub ({{ commit_hash }})</a>
             </p>
         </div>
         {% endif %}

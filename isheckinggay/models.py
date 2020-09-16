@@ -9,3 +9,4 @@ class User(UserMixin, db.Model):
     api_key = db.Column(db.String(100))
     git_url = db.Column(db.String(256))
     is_admin = db.Column(db.Boolean())
+    reset_token = db.Column(db.String(256))
