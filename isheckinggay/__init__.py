@@ -223,3 +223,8 @@ def _post_reset_password():
     user.password = generate_password_hash(request.form.get('password'), method='sha256')
     db.session.commit()
     return redirect('/profile' if current_user.is_authenticated else '/login')
+
+    
+@APP.route('/<path:path>', methods=['GET'])
+def _send_static_root(path):
+    return send_from_directory('static', path)
