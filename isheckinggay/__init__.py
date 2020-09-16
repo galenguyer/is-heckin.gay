@@ -167,6 +167,7 @@ def _update_profile():
 
 
 @APP.route('/manage', methods=['GET'])
+@login_required
 def _get_manage():
     if not current_user.is_admin:
         flash('Not Authorized to View Page')
@@ -176,6 +177,7 @@ def _get_manage():
 
 
 @APP.route('/manage', methods=['POST'])
+@login_required
 def _post_manage():
     if not current_user.is_admin:
         flash('Not Authorized to View Page')
@@ -191,3 +193,33 @@ def _post_manage():
     user.is_admin = (True if request.form.get('admin') else False)
     db.session.commit()
     return redirect('/manage?user='+user.username)
+
+
+@APP.route('/getpwreset', methods=['GET'])
+@login_required
+def _get_pw_reset():
+    if not request.args.get('user'):
+        current_user.reset_token = ''.join(secrets.token_hex(32))
+        db.session.commit()
+        return redirect('/resetpassword?token='+current_user.reset_token)
+    elif current_user.is_admin:
+        user = User.query.filter_by(username=request.args.get('user')).first_or_404()
+        user.reset_token = ''.join(secrets.token_hex(32))
+        db.session.commit()
+        return redirect('/resetpassword?token='+user.reset_token)
+
+@APP.route('/resetpassword', methods=['GET'])
+def _get_reset_password():
+    if not request.args.get('token') or not User.query.filter_by(reset_token=request.args.get('token')).first():
+        return render_template('error.html', message='Invalid reset token', commit_hash=commit_hash)
+    user = User.query.filter_by(reset_token=request.args.get('token')).first()
+    return render_template('resetpassword.html', user=user, commit_hash=commit_hash)
+
+@APP.route('/resetpassword', methods=['POST'])
+def _post_reset_password():
+    if not request.args.get('token') or not User.query.filter_by(reset_token=request.args.get('token')).first():
+        return render_template('error.html', message='Invalid reset token', commit_hash=commit_hash)
+    user = User.query.filter_by(reset_token=request.args.get('token')).first()
+    user.password = generate_password_hash(request.form.get('password'), method='sha256')
+    db.session.commit()
+    return redirect('/profile' if current_user.is_authenticated else '/login')
