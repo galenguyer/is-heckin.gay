@@ -1,4 +1,5 @@
 import os
+import secrets
 import subprocess
 import urllib.parse
 from base64 import b64encode, b64decode
@@ -123,3 +124,22 @@ def post_createuser():
     if user:
         flash('User already exists')
         return redirect('/createuser')
+    
+    new_user = User(username=username, 
+        password=generate_password_hash(''.join(secrets.token_hex(32)), method='sha256'), 
+        is_admin=False,
+        email=email,
+        api_key=''.join(secrets.token_hex(32)),
+        git_url='')
+    db.session.add(new_user)
+    db.session.commit()
+    return redirect('/')
+
+@APP.route('/users', methods=['GET'])
+@login_required
+def _users():
+    if not current_user.is_admin:
+        flash('Not Authorized to View Page')
+        return redirect('/')
+    users = User.query.all()
+    return render_template('users.html', users=users, commit_hash=commit_hash)

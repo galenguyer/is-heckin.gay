@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+        <title>Wireguard Control Panel</title>
+        <meta name="theme-color" content="#B0197E">
+        <link rel="stylesheet" href="/static/style.css" media="screen">
+    </head>
+    <body>
+        <div class="top">
+            <h3>Users</h3>
+        </div>
+        <table id="fields">
+            <tr>
+                <th>Id</th>
+                <th>Username</th>
+                <th>Email</th>
+                <th>Git URL</th>
+            </tr>
+            {% for user in users %}
+            <tr>
+                <td>{{ user.id }}</td>
+                <td>{{ user.username }}</td>
+                <td>{{ user.email }}</td>
+                <td>{{ user.git_url }}</td>
+            </tr>
+            {% endfor %}
+        </table>
+        {% if commit_hash %}
+        <div class="git">
+            <p>
+            <a href="https://github.com/galenguyer/wireguard_panel/tree/{{ commit_hash }}">Check out this project on GitHub ({{ commit_hash }})</a>
+            </p>
+        </div>
+        {% endif %}
+    </body>
+</html>
