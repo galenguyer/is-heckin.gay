@@ -18,10 +18,10 @@ Locally running this application should be pretty simple.
 2. Install dependencies
   * `pip install -r requirements.txt`
 3. Run the app
-  * `gunicorn demo:APP --bind=localhost:5000`
+  * `gunicorn isheckinggay:APP --bind=localhost:5000`
 4. Visit localhost:5000 in your web browser.
 
 ## Linting
 This demo uses pylint.
-Travis CI will automatically run pylint on commits and PRs, but you can also run pylint manually, using `pylint --load-plugins pylint_quotes demo`.
+Travis CI will automatically run pylint on commits and PRs, but you can also run pylint manually, using `pylint --load-plugins pylint_quotes isheckinggay`.
 The pylint_quotes plugin is loaded to ensure standardised quotation mark formats.

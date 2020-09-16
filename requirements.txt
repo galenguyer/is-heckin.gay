@@ -1,6 +1,6 @@
 flask
-
+flask-login
+flasl-sqlalchemy
 gunicorn
-
 pylint
 pylint-quotes
