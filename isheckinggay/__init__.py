@@ -192,7 +192,7 @@ def _post_manage():
     user.api_key = request.form.get('api_key')
     user.is_admin = (True if request.form.get('admin') else False)
     db.session.commit()
-    return redirect('/manage?user='+user.username)
+    return redirect('/users')
 
 
 @APP.route('/getpwreset', methods=['GET'])
@@ -219,8 +219,14 @@ def _get_reset_password():
 def _post_reset_password():
     if not request.args.get('token') or not User.query.filter_by(reset_token=request.args.get('token')).first():
         return render_template('error.html', message='Invalid reset token', commit_hash=commit_hash)
+    if len(request.form.get('password').strip()) < 8:
+        flash('Passwords less than 8 characters are not allowed')
+        return redirect(f'/resetpassword?token={request.args.get("token")}')
     user = User.query.filter_by(reset_token=request.args.get('token')).first()
+    if len(user.reset_token) < 8:
+        return render_template('error.html', message='Invalid reset token', commit_hash=commit_hash)
     user.password = generate_password_hash(request.form.get('password'), method='sha256')
+    user.reset_token = ''
     db.session.commit()
     return redirect('/profile' if current_user.is_authenticated else '/login')
 

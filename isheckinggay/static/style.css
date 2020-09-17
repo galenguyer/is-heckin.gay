@@ -1,12 +1,31 @@
 body {
-    background-color: #eee;
+    background-color: #f2f2f2;
     text-align: center;
     padding-top: 80px;
+    font-family: sans-serif;
+}
+
+table {
+    margin-left:auto; 
+    margin-right:auto;
+    background-color: #d4dafa;
+    margin-bottom: 8px;
+    border-radius: 12px;
+}
+
+th, td {
+    padding: 10px;
+}
+
+input {
+    border: 2px solid #9d5cd5;
+    border-radius: 4px;
+    padding: 4px 8px;
 }
 
 .top {
     position: fixed;
-    background-color: #b0197e;
+    background-color: #9d5cd5;
     color: #fff;
     box-shadow: 0 1px 2px rgba(0,0,0,.3);
     right: 0;
