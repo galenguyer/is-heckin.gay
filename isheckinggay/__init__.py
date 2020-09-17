@@ -9,6 +9,7 @@ from pathlib import Path
 from flask import Flask, render_template, send_from_directory, request, redirect, url_for, flash
 from flask_login import LoginManager, login_user, logout_user, login_required, current_user
 from flask_sqlalchemy import SQLAlchemy
+from jinja2 import Environment, FileSystemLoader
 from sqlalchemy import or_
 import git 
 from werkzeug.security import generate_password_hash, check_password_hash
@@ -22,6 +23,8 @@ else:
     APP.config.from_pyfile(os.path.join(os.getcwd(), 'config.env.py'))
 
 APP.secret_key = APP.config['SECRET_KEY']
+
+jinja_env = Environment(loader=FileSystemLoader('isheckinggay/templates'))
 
 db = SQLAlchemy(APP)
 APP.logger.info('SQLAlchemy pointed at ' + repr(db.engine.url))
@@ -136,6 +139,14 @@ def post_createuser():
         git_url='')
     db.session.add(new_user)
     db.session.commit()
+
+    template = jinja_env.get_template('nginx.conf.jinja2')
+    rendered = template.render(user=new_user.username)
+    nginx_conf_path = Path(APP.config['NGINX_CONF_PATH'])
+    if not nginx_conf_path.is_dir():
+        nginx_conf_path.mkdir(parents=True)
+    with open(str(Path(nginx_conf_path, f'{new_user.username}.conf')), "w") as fh:
+        fh.write(rendered)
     return redirect('/users')
 
 

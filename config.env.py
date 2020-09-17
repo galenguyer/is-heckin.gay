@@ -17,6 +17,7 @@ SECRET_KEY = os.environ.get('SESSION_KEY', default=''.join(secrets.token_hex(16)
 
 
 WEB_PATH = os.environ.get('WEB_PATH', default='./www/')
+NGINX_CONF_PATH = os.environ.get('NGINX_CONF_PATH', default='./nginx/')
 SQLALCHEMY_DATABASE_URI = os.environ.get('SQLALCHEMY_DATABASE_URI', default='sqlite:///./sqlite.db')
 SQLALCHEMY_TRACK_MODIFICATIONS = False
 APP_ADMIN_PASSWORD = os.environ.get('APP_ADMIN_PASSWORD', default='tits123')
