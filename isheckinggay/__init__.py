@@ -2,6 +2,7 @@ import os
 import secrets
 import subprocess
 import urllib.parse
+import shutil
 from base64 import b64encode, b64decode
 from pathlib import Path
 
@@ -9,6 +10,7 @@ from flask import Flask, render_template, send_from_directory, request, redirect
 from flask_login import LoginManager, login_user, logout_user, login_required, current_user
 from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy import or_
+import git 
 from werkzeug.security import generate_password_hash, check_password_hash
 
 APP = Flask(__name__)
@@ -230,7 +232,30 @@ def _post_reset_password():
     db.session.commit()
     return redirect('/profile' if current_user.is_authenticated else '/login')
 
-    
+
+@APP.route('/update', methods=['GET'])
+@login_required
+def _get_update():
+    web_path = Path(APP.config['WEB_PATH'])
+    if not web_path.is_dir():
+        web_path.mkdir()
+
+    repo_path = Path(web_path, current_user.username)    
+    if repo_path.is_dir():
+        r = git.Repo(repo_path)
+        field = r.remotes[0].config_reader.get("url")  
+        if field == current_user.git_url:
+            r.remotes.origin.pull()
+        else:
+            shutil.rmtree(repo_path)
+            repo_path.mkdir()
+            r = git.Repo.clone_from(current_user.git_url, str(repo_path))
+    else:
+        repo_path.mkdir()
+        r = git.Repo.clone_from(current_user.git_url, str(repo_path))
+    return render_template('update.html', message='Update Successful! See your site at [Coming Soon]!')
+
+
 @APP.route('/<path:path>', methods=['GET'])
 def _send_static_root(path):
     return send_from_directory('static', path)

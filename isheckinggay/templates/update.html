@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+        <title>Heckin' Gay Websites</title>
+        <meta name="theme-color" content="#B0197E">
+        <link rel="stylesheet" href="/static/style.css" media="screen">
+        <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
+        <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
+        <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
+        <link rel="manifest" href="/site.webmanifest">
+        <link rel="mask-icon" href="/safari-pinned-tab.svg" color="#ffc40d">
+        <meta name="msapplication-TileColor" content="#ffc40d">
+        <meta name="theme-color" content="#ffc40d">
+    </head>
+    <body>
+        <div class="top">
+            <h3>Update Url</h3>
+        </div>
+        <p>{{ message }}</p>
+        <p>You can also go back to your <a href="/profile">profile.</a></p>
+        {% if commit_hash %}
+        <div class="git">
+            <p>
+            <a href="https://github.com/galenguyer/is-heckin.gay/tree/{{ commit_hash }}">Check out this project on GitHub ({{ commit_hash }})</a>
+            </p>
+        </div>
+        {% endif %}
+    </body>
+</html>
