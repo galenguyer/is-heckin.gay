@@ -34,6 +34,9 @@
                 <td>{{ user.is_admin | string }}</td>
             </tr>
             {% endfor %}
+            <tr>
+                <th colspan="5"><a href="/createuser">Create User</a></th>
+            </tr>
         </table>
         {% if commit_hash %}
         <div class="git">
